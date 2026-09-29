@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05090c">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://hvowzahihflzgsasirxo.supabase.co; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
+<title>TRA Control Center</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<section id="login" class="login">
+  <div class="loginbox">
+    <div class="intro">
+      <div class="brand"><b>↑</b>TRA / PRIVATE TERMINAL</div>
+      <div>
+        <h1>Veja o sistema <span>operar e aprender.</span></h1>
+        <p>Shadow, sinais, PnL, pesquisa automática, risco e infraestrutura em uma única visão.</p>
+      </div>
+      <div class="sub">READ ONLY · LIVE SUPABASE DATA</div>
+    </div>
+    <div class="form">
+      <div class="ey">Acesso autorizado</div>
+      <h2>Entrar no terminal</h2>
+      <div class="hint">Credenciais privadas do operador.</div>
+      <div id="err" class="err"></div>
+      <form id="loginForm">
+        <div class="field"><label for="user">Usuário</label><input id="user" autocomplete="username" required autofocus></div>
+        <div class="field"><label for="pass">Senha</label><input id="pass" type="password" autocomplete="current-password" required></div>
+        <button class="primary" type="submit">ENTRAR</button>
+      </form>
+      <div class="safe">sessão privada · expira em 8 horas</div>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="sidebrand brand"><b>↑</b>TRA<small>CONTROL CENTER</small></div>
+    <nav class="nav">
+      <button class="active" data-view="overview">⌁ &nbsp; Visão geral</button>
+      <button data-view="ops">↗ &nbsp; Operações</button>
+      <button data-view="research">◇ &nbsp; Pesquisa</button>
+      <button data-view="system">◎ &nbsp; Sistema</button>
+    </nav>
+    <div class="userbox"><button id="logout" class="logout">SAIR</button><b>Leiker</b><span>Read-only operator</span></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb">TRA / <b id="crumb">Visão geral</b></div>
+      <div class="live"><i id="dot" class="dot"></i><span id="sync">Conectando...</span></div>
+    </header>
+
+    <div class="content">
+      <section class="view active" id="overview">
+        <div class="title"><div><h1>Visão operacional</h1><p>O que o TRA está fazendo agora.</p></div><span class="stage">SHADOW FORWARD VALIDATION</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="label">Equity virtual</div><div class="value" id="equity">—</div><div class="sub" id="eqsub">—</div></div>
+          <div class="metric"><div class="label">PnL</div><div class="value" id="pnl">—</div><div class="sub" id="pnlp">—</div></div>
+          <div class="metric"><div class="label">Trades</div><div class="value" id="trades">—</div><div class="sub" id="wr">—</div></div>
+          <div class="metric"><div class="label">Drawdown</div><div class="value" id="dd">—</div><div class="sub">gate ≤ 5%</div></div>
+          <div class="metric"><div class="label">Champion</div><div class="value cyan" id="champ">—</div><div class="sub" id="champm">—</div></div>
+          <div class="metric"><div class="label">Sistema</div><div class="value" id="health">—</div><div class="sub" id="healtht">—</div></div>
+        </div>
+
+        <div class="grid g2">
+          <article class="panel">
+            <div class="ph"><div><h2>EQUITY / SHADOW</h2><small id="shadowmeta">—</small></div><span class="badge" id="shadowst">—</span></div>
+            <div class="pb"><div class="chart"><svg id="chart" viewBox="0 0 900 270" preserveAspectRatio="none"></svg><div class="empty" id="chartempty">Aguardando primeiro trade fechado</div></div></div>
+          </article>
+          <article class="panel">
+            <div class="ph"><div><h2>DECISÃO ATUAL</h2><small>Champion ativo</small></div><span id="sigbadge" class="badge">—</span></div>
+            <div class="signal"><div><div id="action" class="action">—</div><div id="sigtime" class="sub">—</div></div><div class="score"><b id="prob">—</b><span>probabilidade</span></div></div>
+            <div id="decisionrows" class="rows"></div>
+          </article>
+        </div>
+
+        <div class="grid split">
+          <article class="panel"><div class="ph"><h2>FEED AO VIVO</h2><small>decisões + pesquisa + sistema</small></div><div id="feed" class="pb feed"></div></article>
+          <article class="panel"><div class="ph"><h2>LABORATÓRIO</h2><small>isolado do champion</small></div><div id="lab" class="pb"></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="ops">
+        <div class="title"><div><h1>Operações Shadow</h1><p>Entradas, proteção, saídas e sinais.</p></div></div>
+        <div class="grid g2">
+          <article class="panel"><div class="ph"><h2>POSIÇÃO ATUAL</h2><small>virtual</small></div><div id="position" class="pb"></div></article>
+          <article class="panel"><div class="ph"><h2>GATE FORWARD</h2><small>progresso</small></div><div id="gate" class="rows"></div></article>
+        </div>
+        <article class="panel" style="margin-top:13px">
+          <div class="ph"><h2>HISTÓRICO</h2><small>últimas posições</small></div>
+          <div class="tablewrap"><table><thead><tr><th>Status</th><th>Entrada</th><th>Preço</th><th>Stop</th><th>Target</th><th>Saída</th><th>Motivo</th><th>Retorno</th></tr></thead><tbody id="posbody"></tbody></table></div>
+        </article>
+        <article class="panel" style="margin-top:13px">
+          <div class="ph"><h2>SINAIS</h2><small>últimos 60</small></div>
+          <div class="tablewrap"><table><thead><tr><th>Horário</th><th>Ação</th><th>Prob.</th><th>Threshold</th><th>ATR</th></tr></thead><tbody id="sigbody"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="view" id="research">
+        <div class="title"><div><h1>Research Engine</h1><p>Hipóteses testadas antes de qualquer promoção.</p></div><span class="stage">ISOLADO DO CHAMPION</span></div>
+        <article class="panel"><div class="ph"><h2>HIPÓTESES</h2><small id="hcounts">—</small></div><div id="hyp" class="pb"></div></article>
+        <article class="panel" style="margin-top:13px">
+          <div class="ph"><h2>EXPERIMENTOS RECENTES</h2><small>out-of-sample + walk-forward</small></div>
+          <div class="tablewrap"><table><thead><tr><th>Hipótese</th><th>Ativo</th><th>TF</th><th>Regra</th><th>Status</th><th>Modelo</th><th>WF Return</th><th>WF DD</th><th>Trades</th></tr></thead><tbody id="expbody"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="view" id="system">
+        <div class="title"><div><h1>Sistema & risco</h1><p>Gates, health, execução e automação.</p></div></div>
+        <article class="panel">
+          <div class="ph"><h2>PIPELINE</h2><small>REAL exige unlock manual</small></div>
+          <div class="pb pipeline">
+            <div class="node"><b>SHADOW</b><p id="pipeShadow">—</p></div><div class="arrow">→</div>
+            <div class="node"><b>TESTNET</b><p id="pipeTestnet">—</p></div><div class="arrow">→</div>
+            <div class="node"><b>REAL</b><p id="pipeReal">—</p></div>
+          </div>
+        </article>
+        <div class="grid split">
+          <article class="panel"><div class="ph"><h2>HEALTH</h2><small>último ciclo</small></div><div id="sysrows" class="rows"></div></article>
+          <article class="panel"><div class="ph"><h2>BLOCKERS TESTNET</h2><small>pré-requisitos</small></div><div id="blocks" class="pb blockers"></div></article>
+        </div>
+        <article class="panel" style="margin-top:13px">
+          <div class="ph"><h2>CRONS</h2><small>últimas execuções</small></div>
+          <div class="tablewrap"><table><thead><tr><th>Job</th><th>Status</th><th>Início</th><th>Duração</th></tr></thead><tbody id="cronbody"></tbody></table></div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <nav class="mobile">
+    <button class="active" data-view="overview">GERAL</button>
+    <button data-view="ops">OPERAÇÕES</button>
+    <button data-view="research">PESQUISA</button>
+    <button data-view="system">SISTEMA</button>
+  </nav>
+</div>
+<script src="./app.js" defer></script>
+</body>
+</html>
