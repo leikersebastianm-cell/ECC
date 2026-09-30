@@ -1,10 +1,10 @@
-name: Deploy TRA Dashboard
+name: Deploy TRA Control Center
 
 on:
   push:
     branches: [main]
     paths:
-      - "tra-dashboard-v2/**"
+      - "tra-control-center/**"
       - ".github/workflows/tra-dashboard-pages.yml"
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "tra-dashboard-pages"
+  group: "tra-control-center-pages"
   cancel-in-progress: true
 
 jobs:
@@ -28,12 +28,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Upload dashboard
+      - name: Upload TRA Control Center
         uses: actions/upload-pages-artifact@v3
         with:
-          path: tra-dashboard-v2
+          path: tra-control-center
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
