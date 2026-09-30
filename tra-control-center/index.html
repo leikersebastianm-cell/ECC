@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b0e">
+<meta name="color-scheme" content="dark">
+<title>TRA Control Center</title>
+<style>
+:root{
+  --bg:#070b0e;--panel:#0c1216;--panel2:#10181d;--line:#1c2a31;--text:#eaf2f4;
+  --muted:#8ea1a8;--cyan:#57d6e6;--green:#49d596;--red:#ff6d78;--amber:#f0b95d;
+  --radius:16px;--shadow:0 16px 40px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}.hidden{display:none!important}button,input{font:inherit}
+button{cursor:pointer}.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:
+radial-gradient(circle at 15% 15%,rgba(87,214,230,.08),transparent 28%),
+linear-gradient(180deg,#080d10,#05080a)}
+.login-shell{width:min(980px,100%);display:grid;grid-template-columns:1.15fr .85fr;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#090f13;box-shadow:var(--shadow)}
+.login-intro{padding:54px;display:flex;flex-direction:column;justify-content:space-between;min-height:560px;background:linear-gradient(160deg,rgba(87,214,230,.06),transparent 45%)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.08em}.brand-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(87,214,230,.45);border-radius:10px;color:var(--cyan);background:rgba(87,214,230,.06)}
+.login-intro h1{font-size:clamp(38px,6vw,68px);line-height:.98;margin:0 0 18px;letter-spacing:-.055em}.login-intro h1 span{color:var(--cyan)}
+.login-intro p{max-width:560px;color:#a8b6bb;font-size:18px;line-height:1.6;margin:0}.micro{color:#73868d;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.login-form{padding:54px;display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--line);background:#0b1115}
+.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--cyan);font-weight:800;text-transform:uppercase}.login-form h2{font-size:28px;margin:10px 0 8px}.hint{color:var(--muted);font-size:14px;margin-bottom:28px}
+.field{display:grid;gap:8px;margin-bottom:16px}.field label{font-size:13px;color:#aebbc0;font-weight:700}.field input{height:48px;border:1px solid #24343c;background:#070c0f;color:white;border-radius:12px;padding:0 14px;outline:none}.field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(87,214,230,.08)}
+.primary{height:48px;border:0;border-radius:12px;background:var(--cyan);color:#041013;font-weight:900;letter-spacing:.05em}.primary:hover{filter:brightness(1.04)}.safe-note{margin-top:18px;color:#73868d;font-size:12px;line-height:1.5}
+.err{display:none;padding:11px 12px;border:1px solid rgba(255,109,120,.35);background:rgba(255,109,120,.08);color:#ffb2b8;border-radius:10px;font-size:13px;margin-bottom:16px}
+.app{min-height:100vh;display:grid;grid-template-columns:230px minmax(0,1fr)}
+.sidebar{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;background:#080d10}
+.side-brand{padding:8px 10px 24px}.side-brand small{display:block;margin-left:44px;margin-top:-6px;color:#64777e;font-size:9px;letter-spacing:.16em}
+.nav{display:grid;gap:6px}.nav button,.mobile-nav button{border:0;background:transparent;color:#81949b;text-align:left;border-radius:10px;font-weight:700}.nav button{padding:12px 13px}.nav button.active,.nav button:hover{background:#0e171b;color:white}.nav button.active{box-shadow:inset 3px 0 var(--cyan)}
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding:16px 10px 4px}.sidebar-bottom b{display:block;font-size:13px}.sidebar-bottom span{color:#72858c;font-size:11px}.logout{margin-top:12px;border:1px solid var(--line);background:#0b1115;color:#a9b7bc;border-radius:9px;padding:8px 10px;width:100%}
+.main{min-width:0}.topbar{height:62px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;background:rgba(7,11,14,.93);backdrop-filter:blur(14px);z-index:10}
+.topbar-left{display:flex;align-items:center;gap:10px;color:#81949b;font-size:13px}.topbar-left b{color:white}.live{display:flex;align-items:center;gap:8px;font-size:11px;color:#82959c}.dot{width:8px;height:8px;border-radius:50%;background:#53656b;box-shadow:0 0 0 4px rgba(73,213,150,.04)}
+.content{padding:28px;max-width:1440px;margin:0 auto}.view{display:none}.view.active{display:block}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}.page-head h1{margin:0 0 6px;font-size:30px;letter-spacing:-.035em}.page-head p{margin:0;color:var(--muted);line-height:1.55}
+.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#0a1114;border-radius:999px;padding:7px 10px;font-size:11px;color:#9fb0b6;font-weight:800}.pill.green{color:#aef2d1;border-color:rgba(73,213,150,.3);background:rgba(73,213,150,.06)}.pill.red{color:#ffb7bd;border-color:rgba(255,109,120,.3);background:rgba(255,109,120,.06)}.pill.amber{color:#f4d29a;border-color:rgba(240,185,93,.3);background:rgba(240,185,93,.06)}
+.safety-strip{border:1px solid rgba(73,213,150,.25);background:linear-gradient(90deg,rgba(73,213,150,.08),rgba(73,213,150,.025));border-radius:12px;padding:11px 14px;display:flex;gap:10px;align-items:center;margin-bottom:16px;color:#bde8d6;font-size:13px}.safety-strip b{color:#dff7ed}
+.now-card{border:1px solid #1c3037;border-radius:20px;background:linear-gradient(145deg,#0e171b,#0a1013);padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.now-title{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.now-title h2{font-size:18px;margin:0}.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.status-item{border:1px solid var(--line);border-radius:14px;padding:15px;background:#091014;min-height:112px}.status-item span{display:block;color:#7f9299;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}.status-item b{display:block;font-size:18px;margin:7px 0 6px}.status-item p{margin:0;color:#93a6ad;font-size:12px;line-height:1.45}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.metric{padding:16px;border:1px solid var(--line);border-radius:14px;background:#0a1014}.metric .label{font-size:11px;color:#82959c;font-weight:800;text-transform:uppercase;letter-spacing:.07em}.metric .value{font-size:26px;margin:8px 0 4px;font-weight:850;letter-spacing:-.04em}.metric .help{font-size:11px;color:#70848b;line-height:1.35}
+.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-bottom:14px}.panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}.panel-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h3{font-size:13px;margin:0;letter-spacing:.04em}.panel-head small{color:#72858c}.panel-body{padding:16px}.rows{display:grid}.row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #152127}.row:last-child{border-bottom:0}.row span{color:#879aa1;font-size:12px}.row b{font-size:12px;text-align:right}.signal-main{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:8px 0 15px}.action{font-size:34px;font-weight:900;letter-spacing:-.05em}.action.hold{color:var(--amber)}.action.buy{color:var(--green)}.big-number{font-size:28px;font-weight:850}
+.pipeline{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px}.stage{padding:14px;border:1px solid var(--line);border-radius:14px;background:#091014}.stage b{display:block;font-size:12px}.stage p{margin:6px 0 0;color:#82959c;font-size:11px;line-height:1.4}.arrow{color:#476068}
+.callout{padding:14px;border:1px solid rgba(87,214,230,.2);background:rgba(87,214,230,.045);border-radius:12px;color:#9fc5cc;font-size:12px;line-height:1.55}.callout b{color:#d8f7fb}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{text-align:left;padding:11px 12px;border-bottom:1px solid #17242a;font-size:12px;white-space:nowrap}.table th{color:#71848b;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.table td{color:#b8c5c9}.empty{padding:28px;text-align:center;color:#6d8188;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{border:1px solid var(--line);background:#0a1014;border-radius:14px;padding:14px}.card h4{margin:0 0 7px;font-size:13px}.card p{margin:0;color:#81949b;font-size:11px;line-height:1.5}.card .kpi{font-size:24px;font-weight:850;margin:8px 0}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:900;border:1px solid var(--line);color:#92a4aa;background:#0a1114}.badge.ok{color:#a9efcf;border-color:rgba(73,213,150,.28)}.badge.bad{color:#ffb2b8;border-color:rgba(255,109,120,.28)}.badge.warn{color:#f2d19a;border-color:rgba(240,185,93,.28)}
+.glossary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.glossary div{padding:12px;border:1px solid var(--line);border-radius:12px}.glossary b{font-size:12px}.glossary p{margin:5px 0 0;color:#80939a;font-size:11px;line-height:1.45}
+.tech{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:#090f12}.tech summary{cursor:pointer;padding:13px 14px;font-size:12px;color:#8ea1a8;font-weight:800}.tech .panel-body{border-top:1px solid var(--line)}
+.mobile-nav{display:none}
+.loading{opacity:.55;animation:pulse 1.2s ease-in-out infinite}@keyframes pulse{50%{opacity:.25}}
+.green{color:var(--green)!important}.red{color:var(--red)!important}.cyan{color:var(--cyan)!important}.amber{color:var(--amber)!important}
+@media(max-width:980px){
+  .app{grid-template-columns:1fr}.sidebar{display:none}.content{padding:18px 16px 90px}.topbar{padding:0 16px}.status-grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.mobile-nav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(7,11,14,.96);border-top:1px solid var(--line);padding:7px 8px max(7px,env(safe-area-inset-bottom))}.mobile-nav button{padding:10px 4px;text-align:center;font-size:10px}.mobile-nav button.active{color:var(--cyan);background:#0d161a}
+}
+@media(max-width:680px){
+  .login{padding:0}.login-shell{grid-template-columns:1fr;border:0;border-radius:0;min-height:100vh}.login-intro{display:none}.login-form{border:0;padding:34px 24px}.status-grid,.metrics,.cards,.glossary{grid-template-columns:1fr}.page-head{display:block}.page-head .pill{margin-top:10px}.content{padding:16px 12px 90px}.now-card{padding:15px}.pipeline{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}.metric .value{font-size:24px}
+}
+</style>
+</head>
+<body>
+<section id="login" class="login">
+  <div class="login-shell">
+    <div class="login-intro">
+      <div class="brand"><span class="brand-mark">↑</span> TRA CONTROL CENTER</div>
+      <div>
+        <div class="micro">Painel privado • somente leitura</div>
+        <h1>Entenda o que o TRA está <span>fazendo agora.</span></h1>
+        <p>Operações, aprendizado, segurança e próximos passos explicados de forma simples — sem esconder os detalhes técnicos quando você quiser aprofundar.</p>
+      </div>
+      <div class="micro">Sem OAuth • sem dinheiro real • dados diretos do TRA</div>
+    </div>
+    <div class="login-form">
+      <div class="eyebrow">Acesso privado</div>
+      <h2>Entrar no TRA</h2>
+      <div class="hint">Use seu usuário do operador. Não é e-mail.</div>
+      <div id="loginErr" class="err"></div>
+      <form id="loginForm">
+        <div class="field"><label for="username">Usuário</label><input id="username" autocomplete="username" required placeholder="Leiker"></div>
+        <div class="field"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required placeholder="••••"></div>
+        <button class="primary" type="submit">ENTRAR</button>
+      </form>
+      <div class="safe-note">Sessão privada de até 8 horas. O painel não possui botões para liberar Testnet, dinheiro real ou alterar estratégias.</div>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="side-brand">
+      <div class="brand"><span class="brand-mark">↑</span> TRA</div>
+      <small>CONTROL CENTER</small>
+    </div>
+    <nav class="nav">
+      <button class="active" data-view="home">Início</button>
+      <button data-view="ops">Operações</button>
+      <button data-view="learn">Aprendizado</button>
+      <button data-view="system">Sistema</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <b>Leiker</b><span>Operador • somente leitura</span>
+      <button id="logout" class="logout">Sair</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">TRA / <b id="crumb">Início</b></div>
+      <div class="live"><i id="liveDot" class="dot"></i><span id="liveText">Conectando...</span></div>
+    </header>
+
+    <div class="content">
+      <section id="home" class="view active">
+        <div class="page-head">
+          <div><h1>O que está acontecendo agora?</h1><p>Comece por aqui. Esta tela mostra apenas o que importa para entender o estado atual.</p></div>
+          <span id="homeStage" class="pill">CARREGANDO</span>
+        </div>
+        <div id="safetyStrip" class="safety-strip"><b>Dinheiro real:</b> verificando...</div>
+
+        <article class="now-card">
+          <div class="now-title"><h2>Resumo simples</h2><span id="healthBadge" class="badge">—</span></div>
+          <div class="status-grid">
+            <div class="status-item"><span>O bot está trabalhando?</span><b id="botWorking">—</b><p id="botWorkingWhy">—</p></div>
+            <div class="status-item"><span>Está em uma operação?</span><b id="inTrade">—</b><p id="inTradeWhy">—</p></div>
+            <div class="status-item"><span>Última decisão</span><b id="decisionSimple">—</b><p id="decisionWhy">—</p></div>
+            <div class="status-item"><span>Por que não operou?</span><b id="whyNoTrade">—</b><p id="whyNoTradeDetail">—</p></div>
+            <div class="status-item"><span>Dinheiro real em risco?</span><b id="realRisk">—</b><p id="realRiskWhy">—</p></div>
+            <div class="status-item"><span>Próximo passo</span><b id="nextStep">—</b><p id="nextStepWhy">—</p></div>
+          </div>
+        </article>
+
+        <div class="metrics">
+          <div class="metric"><div class="label">Saldo virtual</div><div id="equity" class="value mono">—</div><div class="help">Saldo usado somente na simulação Shadow.</div></div>
+          <div class="metric"><div class="label">Lucro / prejuízo</div><div id="pnl" class="value mono">—</div><div class="help">PnL: quanto o saldo virtual ganhou ou perdeu.</div></div>
+          <div class="metric"><div class="label">Operações</div><div id="tradeCount" class="value mono">—</div><div class="help">Quantidade de trades fechados no forward Shadow.</div></div>
+          <div class="metric"><div class="label">Maior queda</div><div id="drawdown" class="value mono">—</div><div class="help">Drawdown: maior queda do saldo desde um pico. Menor é melhor.</div></div>
+        </div>
+
+        <div class="grid2">
+          <article class="panel">
+            <div class="panel-head"><h3>Decisão atual</h3><small id="signalTime">—</small></div>
+            <div class="panel-body">
+              <div class="signal-main"><div><div id="currentAction" class="action">—</div><small id="actionTechnical" style="color:#71848b">—</small></div><div style="text-align:right"><div id="probability" class="big-number mono">—</div><small style="color:#71848b">probabilidade</small></div></div>
+              <div id="signalRows" class="rows"></div>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>O que você precisa olhar?</h3><small>4 itens</small></div>
+            <div class="panel-body">
+              <div class="rows">
+                <div class="row"><span>1. Estado do bot</span><b>Saudável e recebendo dados?</b></div>
+                <div class="row"><span>2. Resultado</span><b>PnL e drawdown</b></div>
+                <div class="row"><span>3. Decisão atual</span><b>Esperar ou entrar</b></div>
+                <div class="row"><span>4. Progresso</span><b>Shadow → Testnet → Real</b></div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Caminho de validação</h3><small>Nada avança pulando etapa</small></div>
+          <div class="panel-body">
+            <div class="pipeline">
+              <div class="stage"><b>1. Shadow</b><p id="stageShadow">—</p></div><div class="arrow">→</div>
+              <div class="stage"><b>2. Testnet</b><p id="stageTestnet">—</p></div><div class="arrow">→</div>
+              <div class="stage"><b>3. Dinheiro real</b><p id="stageReal">—</p></div>
+            </div>
+          </div>
+        </article>
+
+        <details class="tech">
+          <summary>Glossário simples</summary>
+          <div class="panel-body glossary">
+            <div><b>Shadow</b><p>Simulação com dinheiro virtual usando dados reais.</p></div>
+            <div><b>Champion</b><p>Modelo principal escolhido após validações anteriores.</p></div>
+            <div><b>Testnet</b><p>Ambiente da exchange para testar execução sem dinheiro real.</p></div>
+            <div><b>PnL</b><p>Lucro ou prejuízo acumulado.</p></div>
+            <div><b>Drawdown</b><p>Maior queda do saldo desde o ponto mais alto.</p></div>
+            <div><b>HOLD / Esperar</b><p>O modelo decidiu não entrar agora.</p></div>
+            <div><b>Kill switch</b><p>Trava que impede execução quando a segurança exige.</p></div>
+            <div><b>Threshold</b><p>Nível mínimo exigido para aceitar um sinal.</p></div>
+          </div>
+        </details>
+      </section>
+
+      <section id="ops" class="view">
+        <div class="page-head"><div><h1>Operações</h1><p>Primeiro o Champion oficial. Estratégias experimentais rejeitadas ficam separadas e não operam.</p></div><span class="pill">SOMENTE LEITURA</span></div>
+        <div class="grid2">
+          <article class="panel"><div class="panel-head"><h3>Posição atual do Champion</h3><small>Shadow</small></div><div id="currentPosition" class="panel-body"></div></article>
+          <article class="panel"><div class="panel-head"><h3>Contexto oficial</h3><small>Modelo #57</small></div><div id="officialContext" class="panel-body rows"></div></article>
+        </div>
+        <article class="panel" style="margin-bottom:14px"><div class="panel-head"><h3>Histórico oficial</h3><small>Sem dados falsos</small></div><div class="table-wrap"><table class="table"><thead><tr><th>Status</th><th>Entrada</th><th>Preço</th><th>Stop</th><th>Alvo</th><th>Saída</th><th>Motivo</th><th>Retorno</th></tr></thead><tbody id="positionsBody"></tbody></table></div></article>
+        <article class="panel"><div class="panel-head"><h3>Sinais recentes</h3><small>Champion</small></div><div class="table-wrap"><table class="table"><thead><tr><th>Horário</th><th>Decisão</th><th>Prob.</th><th>Threshold</th><th>ATR</th></tr></thead><tbody id="signalsBody"></tbody></table></div></article>
+      </section>
+
+      <section id="learn" class="view">
+        <div class="page-head"><div><h1>Aprendizado</h1><p>O que foi pesquisado, o que está aguardando revisão e o que foi descartado.</p></div><span class="pill amber">PESQUISA ≠ VERDADE</span></div>
+        <div id="teamCards" class="cards" style="margin-bottom:14px"></div>
+        <div class="callout" style="margin-bottom:14px"><b>Importante:</b> scouts e workers automáticos não são “IAs generativas”. Os agentes LLM estão bloqueados até existir um provedor configurado. Conteúdo externo é tratado como não confiável até ser reproduzido e validado.</div>
+        <article class="panel" style="margin-bottom:14px"><div class="panel-head"><h3>12 estratégias que eu havia colocado errado em Shadow</h3><small>Agora auditadas</small></div><div class="table-wrap"><table class="table"><thead><tr><th>Estratégia</th><th>Ativo</th><th>TF</th><th>Resultado</th><th>Trades</th><th>Retorno</th><th>PF</th><th>DD</th><th>Trimestres+</th></tr></thead><tbody id="reviewsBody"></tbody></table></div></article>
+        <div class="grid2">
+          <article class="panel"><div class="panel-head"><h3>Pesquisa externa</h3><small>Fontes recentes</small></div><div id="externalList" class="panel-body"></div></article>
+          <article class="panel"><div class="panel-head"><h3>Fila / findings</h3><small>Estado real</small></div><div id="researchState" class="panel-body"></div></article>
+        </div>
+      </section>
+
+      <section id="system" class="view">
+        <div class="page-head"><div><h1>Sistema</h1><p>Saúde, segurança e bloqueios. Detalhes de infraestrutura ficam aqui, não na Home.</p></div><span id="systemHealthPill" class="pill">—</span></div>
+        <div class="cards" style="margin-bottom:14px">
+          <div class="card"><h4>Saúde</h4><div id="sysHealth" class="kpi">—</div><p>Dados e componentes principais.</p></div>
+          <div class="card"><h4>Execução</h4><div id="sysExec" class="kpi">—</div><p>Modo atual do motor de execução.</p></div>
+          <div class="card"><h4>Dinheiro real</h4><div id="sysReal" class="kpi">—</div><p>Deve permanecer bloqueado.</p></div>
+        </div>
+        <div class="grid2">
+          <article class="panel"><div class="panel-head"><h3>Bloqueios para Testnet</h3><small>Pré-requisitos</small></div><div id="blockers" class="panel-body"></div></article>
+          <article class="panel"><div class="panel-head"><h3>Checks de saúde</h3><small>Último ciclo</small></div><div id="healthRows" class="panel-body rows"></div></article>
+        </div>
+        <details class="tech">
+          <summary>Detalhes técnicos / crons</summary>
+          <div class="panel-body">
+            <div id="cronSummary" class="callout" style="margin-bottom:10px"></div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Job</th><th>Status</th><th>Início</th><th>Duração</th></tr></thead><tbody id="cronBody"></tbody></table></div>
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <nav class="mobile-nav">
+    <button class="active" data-view="home">INÍCIO</button>
+    <button data-view="ops">OPERAÇÕES</button>
+    <button data-view="learn">APRENDER</button>
+    <button data-view="system">SISTEMA</button>
+  </nav>
+</div>
+
+<script>
+const API="https://hvowzahihflzgsasirxo.supabase.co/functions/v1/tra-dashboard";
+const $=id=>document.getElementById(id);
+const state={summary:null,ops:null,learn:null,system:null,token:null};
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+const n=(v,d=2)=>Number.isFinite(Number(v))?Number(v).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d}):"—";
+const pct=v=>Number.isFinite(Number(v))?n(v,2)+"%":"—";
+const money=v=>Number.isFinite(Number(v))?Number(v).toLocaleString("pt-BR",{style:"currency",currency:"USD"}):"—";
+const tm=v=>v?new Date(v).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"—";
+const actionPT=a=>({HOLD:"ESPERAR",BUY:"COMPRAR",TAKE:"ENTRAR",BLOCKED_RISK:"BLOQUEADO PELO RISCO",SKIPPED_STALE:"IGNORADO: DADO ATRASADO",ERROR:"ERRO"}[a]||a||"—");
+const setText=(id,v)=>{$(id).textContent=v};
+const badge=(txt,kind="")=>'<span class="badge '+kind+'">'+esc(txt)+'</span>';
+function authHeaders(){return {"authorization":"Bearer "+state.token}}
+async function api(name){
+  const r=await fetch(API+"?api="+encodeURIComponent(name),{headers:authHeaders(),cache:"no-store"});
+  if(r.status===401){logout();throw new Error("SESSION_EXPIRED")}
+  const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||"API_ERROR"); return j.data;
+}
+function showError(msg){$("liveText").textContent=msg;$("liveDot").style.background="var(--red)"}
+function logout(){sessionStorage.removeItem("tra_token");state.token=null;$("app").classList.add("hidden");$("login").classList.remove("hidden")}
+async function login(e){
+  e.preventDefault();const err=$("loginErr");err.style.display="none";
+  try{
+    const r=await fetch(API+"?action=login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({username:$("username").value,password:$("password").value})});
+    const j=await r.json();
+    if(!r.ok||!j.ok){err.textContent=j.error==="RATE_LIMITED"?"Muitas tentativas. Aguarde 15 minutos.":"Usuário ou senha incorretos.";err.style.display="block";return}
+    sessionStorage.setItem("tra_token",j.token);state.token=j.token;$("password").value="";await boot();
+  }catch(x){err.textContent="Falha de conexão. Tente novamente.";err.style.display="block"}
+}
+async function boot(){
+  $("login").classList.add("hidden");$("app").classList.remove("hidden");
+  try{
+    const [s,o]=await Promise.all([api("summary"),api("operations")]);
+    state.summary=s;state.ops=o;renderHome();renderOps();markLive();
+  }catch(e){if(e.message!=="SESSION_EXPIRED")showError("Falha ao carregar dados")}
+}
+function markLive(){setText("liveText","LIVE • "+new Date().toLocaleTimeString("pt-BR",{timeZone:"America/Sao_Paulo",hour:"2-digit",minute:"2-digit",second:"2-digit"}));$("liveDot").style.background="var(--green)"}
+function renderHome(){
+  const s=state.summary||{},o=state.ops||{},sh=s.shadow||{},h=s.health||{},ex=s.execution||{},sig=s.latest_signal||{},g=s.shadow_gate||{},pre=s.testnet_preflight||{},champ=s.champion||{};
+  const pos=o.current_position;
+  $("homeStage").textContent="SHADOW • "+esc(champ.symbol||"—")+" / "+esc(champ.timeframe||"—");
+  $("homeStage").className="pill green";
+  $("safetyStrip").innerHTML="<b>Dinheiro real: BLOQUEADO</b><span>O TRA não está autorizado a usar dinheiro real neste momento.</span>";
+  $("healthBadge").textContent=h.healthy?"SISTEMA SAUDÁVEL":"ATENÇÃO";
+  $("healthBadge").className="badge "+(h.healthy?"ok":"bad");
+  setText("botWorking",h.healthy&&sh.status==="ACTIVE"?"SIM":"NÃO / ATENÇÃO");
+  setText("botWorkingWhy",h.healthy?"Mercado e features estão atualizados; o Shadow está ativo.":"Existe algum check de saúde que precisa ser revisado.");
+  setText("inTrade",pos?"SIM":"NÃO");
+  setText("inTradeWhy",pos?"Existe uma posição Shadow aberta.":"Nenhuma posição Shadow está aberta agora.");
+  setText("decisionSimple",actionPT(sig.action));
+  setText("decisionWhy",sig.action==="HOLD"?"O modelo decidiu esperar em vez de forçar uma entrada.":"O modelo encontrou uma condição diferente de esperar.");
+  setText("whyNoTrade",!pos&&sig.action==="HOLD"?"SEM ENTRADA VÁLIDA":"VEJA A POSIÇÃO");
+  setText("whyNoTradeDetail",!pos&&sig.action==="HOLD"?"A estratégia principal usa candles de 4 horas e só entra quando a condição é válida.":"Acompanhe a posição atual em Operações.");
+  setText("realRisk",ex.real_execution_unlocked?"SIM":"NÃO");
+  setText("realRiskWhy",ex.real_execution_unlocked?"Existe unlock real — revise imediatamente.":"Execução real está bloqueada e o kill switch permanece ativo.");
+  const reasons=g.criteria?.reasons||[];
+  setText("nextStep",g.decision==="TESTNET_CANDIDATE"?"VALIDAR TESTNET":"CONTINUAR SHADOW");
+  setText("nextStepWhy",reasons.includes("NEEDS_30_FORWARD_DAYS")?"Ainda precisa completar 30 dias forward reais.":reasons.includes("NEEDS_AT_LEAST_1_FORWARD_TRADE")?"Ainda precisa registrar pelo menos 1 trade forward.":"O gate continua avaliando automaticamente.");
+  setText("equity",money(sh.equity));setText("pnl",(Number(sh.pnl_quote)>=0?"+":"")+money(sh.pnl_quote));$("pnl").className="value mono "+(Number(sh.pnl_quote)>=0?"green":"red");
+  setText("tradeCount",String(sh.trades??0));setText("drawdown",pct(sh.max_drawdown_pct));
+  setText("currentAction",actionPT(sig.action));$("currentAction").className="action "+(sig.action==="HOLD"?"hold":sig.action==="BUY"?"buy":"");
+  setText("actionTechnical","Estado técnico: "+(sig.action||"—"));setText("probability",pct(Number(sig.probability||0)*100));setText("signalTime",tm(sig.signal_time));
+  $("signalRows").innerHTML=[
+    ["Modelo principal","#"+(champ.model_id||"—")],
+    ["Mercado",(champ.symbol||"—")+" / "+(champ.timeframe||"—")],
+    ["Threshold",n(sig.threshold,2)],
+    ["Kill switch",ex.kill_switch?"ATIVO":"DESATIVADO"]
+  ].map(x=>'<div class="row"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>').join("");
+  setText("stageShadow",(sh.status==="ACTIVE"?"ATIVO":"—")+" • "+n(g.criteria?.observed?.days,2)+" dias • "+(sh.trades??0)+" trades");
+  setText("stageTestnet",pre.ready?"PRONTO":"BLOQUEADO • "+((pre.blockers||[]).length)+" pendência(s)");
+  setText("stageReal",ex.real_execution_unlocked?"DESBLOQUEADO":"BLOQUEADO • exige autorização manual");
+}
+function renderOps(){
+  const s=state.summary||{},o=state.ops||{},champ=s.champion||{},pos=o.current_position;
+  $("currentPosition").innerHTML=pos?'<div class="big-number">'+esc(pos.status)+'</div><div class="rows"><div class="row"><span>Entrada</span><b>'+esc(n(pos.entry_price,4))+'</b></div><div class="row"><span>Stop</span><b>'+esc(n(pos.stop_price,4))+'</b></div><div class="row"><span>Alvo</span><b>'+esc(n(pos.target_price,4))+'</b></div></div>':'<div class="empty">Nenhuma posição aberta. Isso não é erro: o Champion está aguardando uma entrada válida.</div>';
+  $("officialContext").innerHTML=[
+    ["Champion","#"+(champ.model_id||"—")],["Mercado",(champ.symbol||"—")+" / "+(champ.timeframe||"—")],["Estratégia",champ.model_type||"—"],["Versão",champ.model_version||"—"]
+  ].map(x=>'<div class="row"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>').join("");
+  const ps=o.positions||[];$("positionsBody").innerHTML=ps.length?ps.map(p=>'<tr><td>'+esc(p.status||"—")+'</td><td>'+esc(tm(p.entry_time))+'</td><td>'+esc(n(p.entry_price,4))+'</td><td>'+esc(n(p.stop_price,4))+'</td><td>'+esc(n(p.target_price,4))+'</td><td>'+esc(tm(p.exit_time))+'</td><td>'+esc(p.exit_reason||"—")+'</td><td>'+esc(pct(p.equity_return_pct))+'</td></tr>').join(""):'<tr><td colspan="8" class="empty">Ainda não existem operações forward fechadas.</td></tr>';
+  const ss=o.signals||[];$("signalsBody").innerHTML=ss.length?ss.map(x=>'<tr><td>'+esc(tm(x.signal_time))+'</td><td>'+esc(actionPT(x.action))+' <small>('+esc(x.action)+')</small></td><td>'+esc(pct(Number(x.probability||0)*100))+'</td><td>'+esc(n(x.threshold,2))+'</td><td>'+esc(n(x.atr_abs,4))+'</td></tr>').join(""):'<tr><td colspan="5" class="empty">Sem sinais recentes.</td></tr>';
+}
+function renderLearn(){
+  const l=state.learn||{},w=l.worker_summary||{},llm=l.llm_agents||[],reviews=l.parallel_strategy_reviews||[];
+  $("teamCards").innerHTML=[
+    ["Scouts ativos",w.scouts_active??0,"Coletam fontes externas; não são IA generativa."],
+    ["Workers ativos",w.workers_active??0,"Executam tarefas determinísticas e manutenção."],
+    ["Agentes LLM ativos",llm.filter(x=>x.enabled&&x.status==="ACTIVE").length,"Só contam aqui agentes generativos realmente executando."]
+  ].map(x=>'<div class="card"><h4>'+esc(x[0])+'</h4><div class="kpi mono">'+esc(x[1])+'</div><p>'+esc(x[2])+'</p></div>').join("");
+  $("reviewsBody").innerHTML=reviews.length?reviews.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+esc(r.symbol)+'</td><td>'+esc(r.timeframe)+'</td><td>'+badge(r.decision,r.decision==="SHADOW_READY"?"ok":"bad")+'</td><td>'+esc(r.trades||"—")+'</td><td>'+esc(pct(r.return_pct))+'</td><td>'+esc(n(r.profit_factor,2))+'</td><td>'+esc(pct(r.max_drawdown_pct))+'</td><td>'+esc(r.positive_quarters||"0")+'/12</td></tr>').join(""):'<tr><td colspan="9" class="empty">Sem revisões.</td></tr>';
+  const ext=l.external_items||[];$("externalList").innerHTML=ext.length?ext.slice(0,10).map(x=>'<div class="row"><div><b style="display:block;font-size:12px">'+esc(x.title)+'</b><span>'+esc(x.source_kind)+' • '+esc(x.status)+'</span></div><b>'+esc(n(Number(x.credibility||0)*100,0))+'%</b></div>').join(""):'<div class="empty">Sem fontes externas.</div>';
+  const tasks=l.tasks||[],find=l.findings||[];$("researchState").innerHTML='<div class="rows"><div class="row"><span>Tarefas pendentes</span><b>'+tasks.filter(x=>x.status==="QUEUED").length+'</b></div><div class="row"><span>Tarefas bloqueadas</span><b>'+tasks.filter(x=>x.status==="BLOCKED").length+'</b></div><div class="row"><span>Findings registrados</span><b>'+find.length+'</b></div><div class="row"><span>Experimentos</span><b>'+esc(l.research_counts?.experiments??0)+'</b></div></div>';
+}
+function renderSystem(){
+  const y=state.system||{},h=y.health||{},ex=y.execution||{},pre=y.testnet_preflight||{},checks=h.checks||{};
+  setText("sysHealth",h.healthy?"SAUDÁVEL":"ATENÇÃO");$("sysHealth").className="kpi "+(h.healthy?"green":"red");
+  setText("sysExec",ex.mode||"—");setText("sysReal",ex.real_execution_unlocked?"LIBERADO":"BLOQUEADO");$("sysReal").className="kpi "+(ex.real_execution_unlocked?"red":"green");
+  $("systemHealthPill").textContent=h.healthy?"SAUDÁVEL":"ATENÇÃO";$("systemHealthPill").className="pill "+(h.healthy?"green":"red");
+  const bs=pre.blockers||[];$("blockers").innerHTML=bs.length?bs.map(b=>'<div class="row"><span>'+esc(b)+'</span><b>'+badge("BLOQUEIO","warn")+'</b></div>').join(""):'<div class="empty">Sem bloqueios atuais.</div>';
+  $("healthRows").innerHTML=[
+    ["Mercado atualizado",checks.market_fresh?"SIM":"NÃO"],["Features atualizadas",checks.feature_fresh?"SIM":"NÃO"],["Componentes OK",checks.components_ok?"SIM":"NÃO"],["Eventos críticos recentes",checks.recent_critical_events??"—"]
+  ].map(x=>'<div class="row"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>').join("");
+  $("cronSummary").textContent="Jobs ativos: "+(y.cron_summary?.active_total??"—")+" • falhas na última hora: "+(y.cron_summary?.recent_failures??"—");
+  const cs=y.recent_crons||[];$("cronBody").innerHTML=cs.length?cs.map(x=>'<tr><td>'+esc(x.jobname)+'</td><td>'+esc(x.status)+'</td><td>'+esc(tm(x.start_time))+'</td><td>'+esc(x.end_time&&x.start_time?n((new Date(x.end_time)-new Date(x.start_time))/1000,2)+"s":"—")+'</td></tr>').join(""):'<tr><td colspan="4" class="empty">Sem execuções recentes.</td></tr>';
+}
+async function openView(view){
+  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===view));
+  setText("crumb",{home:"Início",ops:"Operações",learn:"Aprendizado",system:"Sistema"}[view]||"TRA");
+  try{
+    if(view==="ops"&&!state.ops){state.ops=await api("operations");renderOps()}
+    if(view==="learn"&&!state.learn){state.learn=await api("learning");renderLearn()}
+    if(view==="system"&&!state.system){state.system=await api("system");renderSystem()}
+    markLive();
+  }catch(e){if(e.message!=="SESSION_EXPIRED")showError("Falha ao carregar "+view)}
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>openView(b.dataset.view)));
+$("loginForm").addEventListener("submit",login);$("logout").addEventListener("click",async()=>{try{await fetch(API+"?action=logout",{method:"POST",headers:authHeaders()})}catch{}logout()});
+state.token=sessionStorage.getItem("tra_token");if(state.token)boot();
+setInterval(async()=>{if(!state.token)return;try{state.summary=await api("summary");renderHome();if(document.querySelector(".view.active")?.id==="ops"){state.ops=await api("operations");renderOps()}markLive()}catch(e){if(e.message!=="SESSION_EXPIRED")showError("Atualização falhou")}},30000);
+</script>
+</body>
+</html>
